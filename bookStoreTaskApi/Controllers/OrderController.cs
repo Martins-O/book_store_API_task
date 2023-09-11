@@ -1,4 +1,5 @@
 ﻿using bookStoreTaskApi.Models;
+using bookStoreTaskApi.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace bookStoreTaskApi.Controllers 
@@ -9,6 +10,13 @@ namespace bookStoreTaskApi.Controllers
     {
         private readonly List<Order> _orders = new();
         private readonly List<Book> _book = new();
+
+        private readonly OrderProcessingService _orderProcessingService;
+
+        public OrderController(OrderProcessingService orderProcessingService)
+        {
+            _orderProcessingService = orderProcessingService;
+        }
 
         [HttpPost]
         [ProducesResponseType(typeof(Order[]), StatusCodes.Status200OK)]
@@ -33,6 +41,8 @@ namespace bookStoreTaskApi.Controllers
             book.Quantity -= order.Quantity;
 
             _orders.Add(order);
+
+            _orderProcessingService.PlaceOrder(order);
 
             return CreatedAtAction(nameof(GetOrderStatus), new { id = order.Id }, order);
         }

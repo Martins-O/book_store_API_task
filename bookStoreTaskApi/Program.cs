@@ -1,16 +1,14 @@
 using bookStoreTaskApi.Models;
 using Microsoft.EntityFrameworkCore;
+using MySql.Data.MySqlClient;
+
+using var connection = new MySqlConnection(Environment.GetEnvironmentVariable("Connection"));
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
 
-builder.Services.AddDbContext<BookDB>(options =>
-{
-    options.UseSqlServer();
-});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

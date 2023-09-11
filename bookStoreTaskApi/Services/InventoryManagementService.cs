@@ -13,37 +13,36 @@ namespace bookStoreTaskApi.Services
 
         public InventoryManagementService()
         {
-            // Initialize RabbitMQ connection and channel
             var factory = new ConnectionFactory
             {
-                HostName = "localhost", // Change to RabbitMQ server host if needed
-                Port = 5672,            // Default RabbitMQ port
-                UserName = "guest",     // Default RabbitMQ username
-                Password = "guest"      // Default RabbitMQ password
+                HostName = "localhost", 
+                Port = 5672,            
+                UserName = "guest",     
+                Password = "guest"      
             };
 
             _connection = factory.CreateConnection();
             _channel = _connection.CreateModel();
 
-            // Declare the queue
             _channel.QueueDeclare(queue: "new_order", durable: false, exclusive: false, autoDelete: false, arguments: null);
 
-            // Set up a consumer to process incoming orders
             var consumer = new EventingBasicConsumer(_channel);
             consumer.Received += (model, ea) =>
             {
                 var message = Encoding.UTF8.GetString(ea.Body.ToArray());
-                var jsonMessage = Encoding.UTF8.GetString(message);
 
-                var order = JsonConvert.DeserializeObject<Order>(jsonMessage);
-                var order = Order.FromJson(message); // Deserialize the order message
+                try
+                {
+                    var order = JsonConvert.DeserializeObject<Order>(message);
 
-                // Update inventory based on the received order
-
-                Console.WriteLine($"Received new order: {order}");
+                    Console.WriteLine($"Received new order: {order}");
+                }
+                catch (JsonException ex)
+                {
+                    Console.WriteLine($"Error deserializing order JSON: {ex.Message}");
+                }
             };
 
-            // Register the consumer with the queue
             _channel.BasicConsume(queue: "new_order", autoAck: true, consumer: consumer);
         }
     }

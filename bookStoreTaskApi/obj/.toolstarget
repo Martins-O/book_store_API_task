@@ -1,0 +1,8 @@
+<Project>
+  <PropertyGroup>
+    <DockerfileFile>C:\Users\jojol\OneDrive\Desktop\projects\bookStoreTaskApi\bookStoreTaskApi\Dockerfile</DockerfileFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <ToolsTarget Include="ContainerBuild" />
+  </ItemGroup>
+</Project>
